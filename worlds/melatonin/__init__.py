@@ -42,6 +42,7 @@ class MelatoninWorld(World):
 
     web = MelatoninWeb()
     ut_can_gen_without_yaml = True
+    is_ut = False
 
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
@@ -50,6 +51,9 @@ class MelatoninWorld(World):
         self.stars = 0
 
     def generate_early(self):
+        self.is_ut = getattr(self.multiworld, "generation_is_fake", False)
+        if self.is_ut:
+            return
         normal_levels = [level.name for night in melatonin_levels.values() for level in night if level.type == NORMAL]
         self.random.shuffle(normal_levels)
         self.level_map: dict[str, list[Dream]] = {
@@ -156,9 +160,6 @@ class MelatoninWorld(World):
                     origin_dream = og_dream
                     break
             origin_night = location.parent_region.entrances[0].parent_region.name
-
-            #print(f"{location.name} is at Dream: {origin_dream.lower().capitalize()} on {origin_night.lower().capitalize()}")
-
             new_hint_data[location.address] = f"Dream: {origin_dream.lower().capitalize()} on {origin_night.lower().capitalize()}"
 
         hint_data[self.player] = new_hint_data
