@@ -51,6 +51,7 @@ class MelatoninWorld(World):
         self.stars = 0
 
     def generate_early(self):
+        self.handle_ut_yamless(None)
         self.is_ut = getattr(self.multiworld, "generation_is_fake", False)
         if self.is_ut:
             return
@@ -134,7 +135,43 @@ class MelatoninWorld(World):
         self.options.include_hard_mode.value = slot_data["IncludeHard"]
         self.options.max_star_check.value = slot_data["MaxStarCheck"]
         self.options.required_star_percent.value = slot_data["StarPercent"]
-        self.level_map = slot_data["LevelMapping"]
+        level_mapping = slot_data["LevelMapping"]
+        normal_levels = [level.name for night in melatonin_levels.values() for level in night if level.type == NORMAL]
+        case_correction = {name.lower(): name for name in normal_levels}
+
+        self.level_map = {
+            "Night 1": [
+                Dream(case_correction[level_mapping[normal_levels[0].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[1].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[2].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[3].lower()]], NORMAL),
+                Dream(INDULGENCE, FINAL)
+            ],
+            "Night 2": [
+                Dream(case_correction[level_mapping[normal_levels[4].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[5].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[6].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[7].lower()]], NORMAL),
+                Dream(PRESSURE, FINAL)
+            ],
+            "Night 3": [
+                Dream(case_correction[level_mapping[normal_levels[8].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[9].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[10].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[11].lower()]], NORMAL),
+                Dream(MEDITATION, FINAL)
+            ],
+            "Night 4": [
+                Dream(case_correction[level_mapping[normal_levels[12].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[13].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[14].lower()]], NORMAL),
+                Dream(case_correction[level_mapping[normal_levels[15].lower()]], NORMAL),
+                Dream(SETBACKS, FINAL)
+            ],
+            "Night 5": [
+                Dream(NEWDAY, GOAL)
+            ]
+        }
         return slot_data
 
     def create_item(self, name: str):
